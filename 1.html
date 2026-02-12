@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirDrop Hunter - Web3空投猎人 | 专业撸空投指南</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-bg-primary: #111113;
+            --color-bg-secondary: #1a1a1d;
+            --color-bg-card: #202023;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #a0a0a0;
+            --color-accent-yellow: #daff01;
+            --color-accent-purple: #7f4a8e;
+            --color-border: rgba(255, 255, 255, 0.1);
+            --color-border-hover: var(--color-accent-yellow);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            background-color: rgba(17, 17, 19, 0.8);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-square {
+            width: 40px;
+            height: 40px;
+            background: var(--color-accent-yellow);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: #000;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 150ms;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-text-primary);
+        }
+
+        .nav-cta {
+            background: white;
+            color: #000;
+            padding: 0.625rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 150ms;
+        }
+
+        .nav-cta:hover {
+            background: var(--color-accent-yellow);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-accent {
+            color: var(--color-accent-yellow);
+            display: block;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #000;
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            text-decoration: none;
+            transition: all 150ms;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-yellow);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid var(--color-border);
+            font-weight: 700;
+            font-size: 1.125rem;
+            text-decoration: none;
+            transition: all 150ms;
+            display: inline-block;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--color-accent-yellow);
+            color: var(--color-accent-yellow);
+        }
+
+        .hero-preview {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 4rem 2rem;
+            margin: 0 auto;
+            max-width: 900px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(218, 255, 1, 0.1) 0%, rgba(127, 74, 142, 0.1) 100%);
+            opacity: 0.5;
+        }
+
+        .preview-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            transition: all 150ms;
+        }
+
+        .feature-card:hover {
+            border-color: var(--color-accent-yellow);
+            box-shadow: 0 0 0 1px var(--color-accent-yellow);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+
+        /* How It Works */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            position: relative;
+        }
+
+        .step-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--color-accent-yellow);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-description {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Success Stories */
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .story-card {
+            background: linear-gradient(135deg, rgba(127, 74, 142, 0.2) 0%, rgba(218, 255, 1, 0.05) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            transition: all 150ms;
+        }
+
+        .story-card:hover {
+            border-color: var(--color-accent-yellow);
+            transform: translateY(-4px);
+        }
+
+        .story-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-accent-yellow);
+            margin-bottom: 1rem;
+        }
+
+        .story-project {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .story-quote {
+            color: var(--color-text-secondary);
+            font-style: italic;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .story-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--color-accent-yellow);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .user-role {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Risk Warning */
+        .risk-warning {
+            background: linear-gradient(135deg, #3d1f47 0%, #2d1a35 100%);
+            border: 2px solid rgba(218, 255, 1, 0.3);
+            border-radius: 1rem;
+            padding: 3rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .risk-warning::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b 0%, #ffa500 50%, #ff6b6b 100%);
+        }
+
+        .risk-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .risk-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffa500;
+        }
+
+        .risk-content {
+            color: #e0e0e0;
+            line-height: 1.8;
+            font-size: 1.125rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .cta-description {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 2.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--color-border);
+            padding: 4rem 0 2rem;
+            margin-top: 5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-description {
+            color: var(--color-text-secondary);
+        }
+
+        .footer-section-title {
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 150ms;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-accent-yellow);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+        }
+
+        /* Kuse Branding */
+        .kuse-branding {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: rgba(17, 17, 19, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-border);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all 150ms;
+            z-index: 999;
+        }
+
+        .kuse-branding:hover {
+            border-color: var(--color-accent-yellow);
+            color: var(--color-text-primary);
+            transform: translateY(-2px);
+        }
+
+        .kuse-branding svg {
+            height: 1.2em;
+            width: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid,
+            .stories-grid,
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .kuse-branding {
+                bottom: 1rem;
+                right: 1rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media print {
+            @page {
+                size: auto;
+                margin: 20mm 25mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .navbar,
+            .kuse-branding {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <div class="logo-square">AH</div>
+                <span class="brand-name">AirDrop Hunter</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#tutorials">空投教程</a></li>
+                <li><a href="#projects">热门项目</a></li>
+                <li><a href="#safety">防骗指南</a></li>
+            </ul>
+            <a href="#learn" class="nav-cta">开始学习</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">
+                Web3撸空投
+                <span class="hero-accent">从零到精通</span>
+            </h1>
+            <p class="hero-description">
+                专业的空投猎人社区，教你用最少的成本，获取最大的空投收益。从基础交互到高级策略，助你在Web3世界掘金。
+            </p>
+            <div class="hero-buttons">
+                <a href="#learn" class="btn-primary">免费学习</a>
+                <a href="#stories" class="btn-ghost">查看案例</a>
+            </div>
+            <div class="hero-preview">
+                <p class="preview-text">空投项目追踪面板</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="tutorials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">为什么选择AirDrop Hunter</h2>
+                <p class="section-description">专业工具 + 实战教程 + 社区支持，让撸空投更简单</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3 class="feature-title">精准项目筛选</h3>
+                    <p class="feature-description">AI算法分析项目潜力，只推荐高质量空投机会。避免垃圾项目，节省你的时间和Gas费。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🛡️</span>
+                    <h3 class="feature-title">防女巫策略</h3>
+                    <p class="feature-description">独家防检测技术指导，教你如何做高质量交互账号。避免多号被封，提升空投成功率。</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">实时收益追踪</h3>
+                    <p class="feature-description">可视化Dashboard追踪你的空投进度和收益。历史案例分析，帮你优化策略提升ROI。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section" id="projects">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">撸空投四步走</h2>
+            </div>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">发现项目</h3>
+                    <p class="step-description">AI筛选 + 社区情报，找到潜力空投</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">链上交互</h3>
+                    <p class="step-description">按教程完成任务，留下贡献记录</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">等待发币</h3>
+                    <p class="step-description">项目代币上线，自动检测资格</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">收获收益</h3>
+                    <p class="step-description">Claim代币，转换为收益</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories Section -->
+    <section class="section" id="stories">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">真实空投案例</h2>
+                <p class="section-description">社区成员的成功故事</p>
+            </div>
+            <div class="stories-grid">
+                <div class="story-card">
+                    <div class="story-amount">$12,000</div>
+                    <h3 class="story-project">Arbitrum空投</h3>
+                    <p class="story-quote">"跟着教程做了3个月交互，拿到1.2万美金空投。"</p>
+                    <div class="story-user">
+                        <div class="user-avatar">王</div>
+                        <div class="user-info">
+                            <div class="user-name">加密老王</div>
+                            <div class="user-role">DeFi玩家</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="story-card">
+                    <div class="story-amount">$8,500</div>
+                    <h3 class="story-project">Blur空投</h3>
+                    <p class="story-quote">"用了防女巫策略，5个号全部成功领取。"</p>
+                    <div class="story-user">
+                        <div class="user-avatar">猎</div>
+                        <div class="user-info">
+                            <div class="user-name">NFT猎手</div>
+                            <div class="user-role">空投专家</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="story-card">
+                    <div class="story-amount">$5,000</div>
+                    <h3 class="story-project">Optimism空投</h3>
+                    <p class="story-quote">"早期参与测试网，收益超出预期。"</p>
+                    <div class="story-user">
+                        <div class="user-avatar">链</div>
+                        <div class="user-info">
+                            <div class="user-name">链上玩家</div>
+                            <div class="user-role">测试网用户</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Risk Warning Section -->
+    <section class="section" id="safety">
+        <div class="container">
+            <div class="risk-warning">
+                <span class="risk-icon">⚠️</span>
+                <h3 class="risk-title">风险提示</h3>
+                <p class="risk-content">
+                    撸空投存在风险：项目可能不发币、女巫检测导致账号被封、Gas费亏损、钓鱼诈骗等。请理性参与，不要投入超过承受范围的资金。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" id="learn">
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">准备开始你的空投之旅？</h2>
+                <p class="cta-description">加入10,000+空投猎人社区，获取最新项目情报和专业指导</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn-primary">免费加入社区</a>
+                    <a href="#" class="btn-ghost">查看付费课程</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-square">AH</div>
+                        <span class="brand-name">AirDrop Hunter</span>
+                    </div>
+                    <p class="footer-description">专业的Web3空投教育平台</p>
+                </div>
+                <div>
+                    <h4 class="footer-section-title">学习资源</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">新手教程</a></li>
+                        <li><a href="#">进阶策略</a></li>
+                        <li><a href="#">工具推荐</a></li>
+                        <li><a href="#">案例分析</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-section-title">社区</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Telegram</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">用户案例</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-section-title">法律</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">免责声明</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">服务条款</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AirDrop Hunter. 仅供学习交流，投资有风险。</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdn.kuse.ai/sdk.prd.js"></script>
+</body>
+</html>
